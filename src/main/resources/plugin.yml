@@ -1,0 +1,5 @@
+name: McPlugin
+version: '${project.version}'
+main: com.github.patrickfrom.mcplugin.mcplugin.McPlugin
+api-version: 1.17
+authors: [ Patrick, Noah ]
