@@ -5,9 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.NotePlayEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.World;
 
 public class Events implements Listener {
     private static final McPlugin plugin = McPlugin.getPlugin(McPlugin.class);
@@ -19,10 +17,5 @@ public class Events implements Listener {
         event.setJoinMessage("");
 
         player.sendMessage("Welcome " + player.getName());
-    }
-
-    @EventHandler
-    public void NotePlayEvent(NotePlayEvent event) {
-
     }
 }
