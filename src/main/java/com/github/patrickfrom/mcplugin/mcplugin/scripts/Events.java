@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 
 public class Events implements Listener {
     private static final McPlugin plugin = McPlugin.getPlugin(McPlugin.class);
@@ -17,5 +18,10 @@ public class Events implements Listener {
         event.setJoinMessage("");
 
         player.sendMessage("Welcome " + player.getName());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onServerPing(ServerListPingEvent event) {
+        event.setMotd("There are currently " + event.getNumPlayers() + "/" + event.getMaxPlayers() + "\u00A76");
     }
 }
