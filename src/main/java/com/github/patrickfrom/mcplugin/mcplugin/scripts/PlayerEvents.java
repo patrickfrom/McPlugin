@@ -12,8 +12,10 @@ import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.Location;
+import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionEffectTypeWrapper;
 
 public class PlayerEvents implements Listener {
     private static final McPlugin plugin = McPlugin.getPlugin(McPlugin.class);
@@ -27,21 +29,16 @@ public class PlayerEvents implements Listener {
         player.sendMessage("Welcome " + player.getName());
     }
 
-    @EventHandler
-    public void PlayerEggThrowEvent(PlayerEggThrowEvent event) {
-        Player player = event.getPlayer();
-        player.chat("Hi");
-        player.sendMessage("Hello");
-    }
-
-
+    boolean jumpBoost = false;
     @EventHandler
     public void PlayerMoveEvent(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        PotionEffect effect = PotionEffect(PotionEffectType.JUMP, 1, 5);
-
-        if(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.EMERALD_BLOCK) {
-            player.addPotionEffect(effect);
+        PotionEffect effect = new PotionEffect(PotionEffectType.JUMP, 1, 5);
+        if (player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.EMERALD_BLOCK) {
+            givePotionEffect(player, effect);
         }
+    }
+    public void givePotionEffect(Player player, PotionEffect effect) {
+        player.addPotionEffect(effect);
     }
 }
