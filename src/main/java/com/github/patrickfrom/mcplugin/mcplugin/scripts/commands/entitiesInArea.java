@@ -19,16 +19,24 @@ public class entitiesInArea implements CommandExecutor {
             int[] loc1 = new int[3];
             int[] loc2 = new int[3];
 
-            loc1[0] = location.getBlockX() + 96;
-            loc1[1] = location.getBlockY() + 96;
-            loc1[2] = location.getBlockZ() + 96;
-            loc2[0] = location.getBlockX() - 96;
-            loc2[1] = location.getBlockY() - 96;
-            loc2[2] = location.getBlockZ() - 96;
+            loc1[0] = location.getBlockX() + 50;
+            loc1[1] = location.getBlockY() + 50;
+            loc1[2] = location.getBlockZ() + 50;
+            loc2[0] = location.getBlockX() - 50;
+            loc2[1] = location.getBlockY() - 50;
+            loc2[2] = location.getBlockZ() - 50;
 
             BoundingBox Box = new BoundingBox(loc1[0], loc1[1], loc1 [2], loc2[0], loc2[1], loc2[2]);
-            Collection <Entity> entityList = location.getWorld().getNearbyEntities(Box);
 
+            if (args.length == 1) {
+                Collection <Entity> entityList = location.getWorld().getNearbyEntities(Box);
+            } else {
+                Collection <Entity> entityList = location.getWorld().getNearbyEntities(Box);
+            }
+
+            /*for(Entity i : entityList) {
+                player.sendMessage(i.getType().getName());
+            }*/
         }
         return true;
     }
