@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -40,6 +41,11 @@ public class PlayerEvents implements Listener {
     public void PlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         Entity entity = event.getRightClicked();
+        if (entity.getType() == EntityType.VILLAGER) {
+            if (entity.getCustomName().equals("Bob")) {
+                player.sendMessage("Why'd you poke me?!");
+            }
+        }
     }
 
     boolean jumpBoost = false;
