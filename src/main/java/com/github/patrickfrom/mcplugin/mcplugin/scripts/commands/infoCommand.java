@@ -13,12 +13,11 @@ public class infoCommand implements CommandExecutor {
             Player player = (Player) sender;
 
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("∎∎∎∎∎∎∎∎∎∎∎∎∎∎\n");
-            stringBuilder.append("  CREATORS\n");
-            stringBuilder.append("  Noah & Patrick\n");
-            stringBuilder.append("∎∎∎∎∎∎∎∎∎∎∎∎∎∎\n");
-            stringBuilder.append("  Version: 1.0.0\n");
-            stringBuilder.append("∎∎∎∎∎∎∎∎∎∎∎∎∎∎");
+            stringBuilder.append("§1CREATORS\n");
+            stringBuilder.append("§aNoah & Patrick\n");
+            stringBuilder.append("§1∎∎∎∎∎∎∎∎∎∎∎∎∎∎\n");
+            stringBuilder.append("§aVersion: 1.0.0\n");
+            stringBuilder.append("§1∎∎∎∎∎∎∎∎∎∎∎∎∎∎");
 
             player.sendMessage(stringBuilder.toString());
         }
