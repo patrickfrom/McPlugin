@@ -7,3 +7,6 @@ commands:
   info:
     description: Info about the plugin
     usage: /<command>
+  entities:
+    description: Find out how many and what entities are near you
+    usage: /<command>
