@@ -10,7 +10,6 @@ public final class McPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new Events(), this);
         getLogger().info("MCPlugin - Noah & Patrick");
     }
-
     @Override
     public void onDisable() {
         // Plugin shutdown logic
