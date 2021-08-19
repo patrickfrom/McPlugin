@@ -16,8 +16,8 @@ public class entitiesInArea implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             Location location = player.getLocation();
-            int[] loc1 = new int[2];
-            int[] loc2 = new int[2];
+            int[] loc1 = new int[3];
+            int[] loc2 = new int[3];
 
             loc1[0] = location.getBlockX() + 96;
             loc1[1] = location.getBlockY() + 96;
@@ -28,6 +28,7 @@ public class entitiesInArea implements CommandExecutor {
 
             BoundingBox Box = new BoundingBox(loc1[0], loc1[1], loc1 [2], loc2[0], loc2[1], loc2[2]);
             Collection <Entity> entityList = location.getWorld().getNearbyEntities(Box);
+
         }
         return true;
     }
