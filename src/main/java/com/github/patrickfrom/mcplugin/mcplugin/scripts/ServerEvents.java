@@ -12,6 +12,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 public class ServerEvents implements Listener {
     private static final McPlugin plugin = McPlugin.getPlugin(McPlugin.class);
@@ -33,7 +37,8 @@ public class ServerEvents implements Listener {
         if(!hasPlayed)
             Bukkit.broadcastMessage("A new player has joined " + player.getName());
 
-        TitleBar(player);
+        CreateTitleBar(player);
+        CreateScoreboard(player);
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -45,8 +50,21 @@ public class ServerEvents implements Listener {
     }
 
 
-    public void TitleBar(Player player) {
-        BossBar bar = Bukkit.createBossBar("TEST", BarColor.BLUE, BarStyle.SOLID);
+    public void CreateTitleBar(Player player) {
+        BossBar bar = Bukkit.createBossBar("§0Sigma Chad", BarColor.WHITE, BarStyle.SOLID);
         bar.addPlayer(player);
+    }
+
+    public void CreateScoreboard(Player player) {
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        Objective objective = scoreboard.registerNewObjective("Display", "dummy", "Sigma");
+
+        objective.setDisplayName("§0Sigma");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        Score info = objective.getScore("§f" + player.getName());
+        info.setScore(1);
+
+        player.setScoreboard(scoreboard);
     }
 }
