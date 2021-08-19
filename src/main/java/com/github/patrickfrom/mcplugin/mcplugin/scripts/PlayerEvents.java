@@ -7,6 +7,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.Location;
 
 public class PlayerEvents implements Listener {
     private static final McPlugin plugin = McPlugin.getPlugin(McPlugin.class);
@@ -18,5 +20,18 @@ public class PlayerEvents implements Listener {
         event.setJoinMessage("");
 
         player.sendMessage("Welcome " + player.getName());
+    }
+
+    @EventHandler
+    public void PlayerMoveEvent(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        Location location = event.getPlayer().getLocation();
+        location.setY(location.getY() -2);
+
+        int block = location.getBlockX();
+        if (block == 133) {
+            player.chat("hehe");
+            player.sendMessage("Hoho");
+        }
     }
 }
