@@ -2,6 +2,9 @@ package com.github.patrickfrom.mcplugin.mcplugin.scripts;
 
 import com.github.patrickfrom.mcplugin.mcplugin.McPlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,6 +26,17 @@ public class ServerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        Boolean hasPlayed = player.hasPlayedBefore();
+
+        if(!hasPlayed)
+            Bukkit.broadcastMessage("A new player has joined " + player.getName());
+
+        TitleBar(player);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
@@ -30,12 +44,9 @@ public class ServerEvents implements Listener {
         event.setQuitMessage(null);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        Boolean hasPlayed = player.hasPlayedBefore();
 
-        if(!hasPlayed)
-            Bukkit.broadcastMessage("A new player has joined " + player.getName());
+    public void TitleBar(Player player) {
+        BossBar bar = Bukkit.createBossBar("TEST", BarColor.BLUE, BarStyle.SOLID);
+        bar.addPlayer(player);
     }
 }
