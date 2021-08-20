@@ -4,10 +4,12 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.entity.Entity;
 import java.util.Collection;
+import java.util.function.Predicate;
 
 public class entitiesInArea implements CommandExecutor {
 
@@ -28,15 +30,10 @@ public class entitiesInArea implements CommandExecutor {
 
             BoundingBox Box = new BoundingBox(loc1[0], loc1[1], loc1 [2], loc2[0], loc2[1], loc2[2]);
 
-            if (args.length == 1) {
-                Collection <Entity> entityList = location.getWorld().getNearbyEntities(Box);
-            } else {
-                Collection <Entity> entityList = location.getWorld().getNearbyEntities(Box);
+            Collection <Entity> entityList = location.getWorld().getNearbyEntities(Box);
+            for(Entity peepee : entityList) {
+                player.sendMessage(peepee.getName());
             }
-
-            /*for(Entity i : entityList) {
-                player.sendMessage(i.getType().getName());
-            }*/
         }
         return true;
     }

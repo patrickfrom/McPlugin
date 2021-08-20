@@ -16,7 +16,6 @@ public class Utils {
         itemMeta.setDisplayName(displayName);
 
         item.setItemMeta(itemMeta);
-        inventory.setItem(invSlot-1, item);
         return item;
     }
 

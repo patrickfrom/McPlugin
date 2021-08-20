@@ -7,15 +7,18 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.inventory.Inventory;
@@ -44,17 +47,15 @@ public class PlayerEvents implements Listener {
         Entity entity = event.getRightClicked();
         if (entity.getType() == EntityType.VILLAGER) {
             if (entity.getCustomName().equals("Bob")) {
-                player.sendMessage("Why'd you poke me?!");
+
             }
         }
     }
 
-    public void CreateMenu(Player player) {
-        Inventory main = player.getInventory();
-
-        Utils.createItem(main, Material.GOLD_INGOT,1,1,"§8§lCREDITS");
-        Utils.createItem(main, Material.BARRIER,1,2,"§4Exit Menu");
-        Utils.createItem(main, Material.CLOCK,1,3,"§510 sec timer");
+    @EventHandler
+    public void InventoryClickEvent(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        ItemStack clickedStack = event.getCursor();
     }
 
     boolean jumpBoost = false;
