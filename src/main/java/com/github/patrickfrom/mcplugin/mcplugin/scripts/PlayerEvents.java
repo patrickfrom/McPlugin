@@ -1,33 +1,32 @@
 package com.github.patrickfrom.mcplugin.mcplugin.scripts;
 
 import com.github.patrickfrom.mcplugin.mcplugin.McPlugin;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.ClickAction;
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.CustomHolder;
+
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.Icon;
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.MainMenu;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.HumanEntity;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
+
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.Location;
+
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.Potion;
+
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionEffectTypeWrapper;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
+
 
 public class PlayerEvents implements Listener {
     private static final McPlugin plugin = McPlugin.getPlugin(McPlugin.class);
@@ -47,15 +46,32 @@ public class PlayerEvents implements Listener {
         Entity entity = event.getRightClicked();
         if (entity.getType() == EntityType.VILLAGER) {
             if (entity.getCustomName().equals("Bob")) {
-
+                MainMenu main = new MainMenu(player);
             }
         }
     }
 
     @EventHandler
     public void InventoryClickEvent(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
-        ItemStack clickedStack = event.getCursor();
+        if (event.getView().getTopInventory().getHolder() instanceof CustomHolder) {
+            event.setCancelled(true);
+
+            if (event.getWhoClicked() instanceof Player) {
+                Player player = (Player) event.getWhoClicked();
+
+                ItemStack itemStack = event.getCurrentItem();
+                if (itemStack == null || itemStack.getType() == Material.AIR) return;
+
+                CustomHolder customHolder = (CustomHolder) event.getView().getTopInventory().getHolder();
+
+                Icon icon = customHolder.getIcon(event.getRawSlot());
+                if (icon == null) return;
+
+                for (ClickAction clickAction : icon.getClickActions()) {
+                    clickAction.execute(player);
+                }
+            }
+        }
     }
 
     boolean jumpBoost = false;

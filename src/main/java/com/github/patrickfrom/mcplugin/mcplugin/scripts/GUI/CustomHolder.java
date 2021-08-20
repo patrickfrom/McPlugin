@@ -1,6 +1,7 @@
 package com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -32,7 +33,6 @@ public class CustomHolder implements InventoryHolder {
     public Inventory getInventory() {
         Inventory inventory = Bukkit.createInventory(this, this.size, this.title);
 
-        //You should check for inventory size so you don't get errors
         for (Entry<Integer, Icon> entry : this.icons.entrySet()) {
             inventory.setItem(entry.getKey(), entry.getValue().getItemStack());
         }
