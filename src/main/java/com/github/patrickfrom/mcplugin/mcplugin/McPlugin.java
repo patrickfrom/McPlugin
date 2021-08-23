@@ -2,8 +2,7 @@ package com.github.patrickfrom.mcplugin.mcplugin;
 
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.PlayerEvents;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.ServerEvents;
-import com.github.patrickfrom.mcplugin.mcplugin.scripts.commands.infoCommand;
-import com.github.patrickfrom.mcplugin.mcplugin.scripts.commands.entitiesInArea;
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.commands.*;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,6 +15,9 @@ public final class McPlugin extends JavaPlugin {
 
         this.getCommand("info").setExecutor(new infoCommand());
         this.getCommand("entities").setExecutor(new entitiesInArea());
+        this.getCommand("spawn").setExecutor(new spawn());
+        this.getCommand("shop").setExecutor(new shop());
+        this.getCommand("menu").setExecutor(new menu());
     }
     @Override
     public void onDisable() {

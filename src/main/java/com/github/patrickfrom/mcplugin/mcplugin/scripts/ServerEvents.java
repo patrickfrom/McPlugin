@@ -2,6 +2,8 @@ package com.github.patrickfrom.mcplugin.mcplugin.scripts;
 
 import com.github.patrickfrom.mcplugin.mcplugin.McPlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -62,8 +64,19 @@ public class ServerEvents implements Listener {
         objective.setDisplayName("§0Sigma");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        Score info = objective.getScore("§f" + player.getName());
-        info.setScore(1);
+        try {
+            connection = DriverManager.getConnection(DataManager.url, DataManager.user, DataManager.password);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next())
+            {
+                Score info = objective.getScore("Money: " + resultSet.getString("Money"));
+                info.setScore(1);
+            }
+            connection.close();
+        } catch (SQLException ex) {
+            player.sendMessage("EXCEPTION ServerEvents");
+        }
 
         player.setScoreboard(scoreboard);
     }

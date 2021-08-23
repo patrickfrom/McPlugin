@@ -10,3 +10,12 @@ commands:
   entities:
     description: Find out how many and what entities are near you
     usage: /<command>
+  spawn:
+    description: Sends you to spawn
+    usage: /<command>
+  shop:
+    description: Opens the shop
+    usage: /<command>
+  menu:
+    description: Opens the main menu
+    usage: /<command>

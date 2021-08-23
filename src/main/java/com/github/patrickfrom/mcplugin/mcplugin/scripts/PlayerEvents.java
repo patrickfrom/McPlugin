@@ -1,12 +1,14 @@
 package com.github.patrickfrom.mcplugin.mcplugin.scripts;
 
-import com.github.patrickfrom.mcplugin.mcplugin.McPlugin;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.ClickAction;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.CustomHolder;
 
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.Icon;
-import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.MainMenu;
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.Menus.MainMenu;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -38,6 +40,14 @@ public class PlayerEvents implements Listener {
         event.setJoinMessage("");
 
         player.sendMessage("Welcome " + player.getName());
+    }
+
+    @EventHandler
+    public void PlayerRespawnEvent(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+        World world = player.getWorld();
+        Location spawnLocation = new Location(world, 201,91,-285);
+        player.teleport(spawnLocation);
     }
 
     @EventHandler
@@ -87,6 +97,9 @@ public class PlayerEvents implements Listener {
             givePotionEffect(player, speedEffect);
         } else if (player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.COAL_BLOCK) {
             givePotionEffect(player, slowEffect);
+        } else if (player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.DIAMOND_BLOCK) {
+            givePotionEffect(player, speedEffect);
+            givePotionEffect(player, jumpEffect);
         }
     }
     public void givePotionEffect(Player player, PotionEffect effect) {
