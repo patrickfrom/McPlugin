@@ -5,6 +5,9 @@ import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.CustomHolder;
 
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.Icon;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.Menus.MainMenu;
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Mineable;
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Ore;
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Tool;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -36,7 +39,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 public class PlayerEvents implements Listener {
@@ -145,18 +147,57 @@ public class PlayerEvents implements Listener {
         ItemStack item = player.getItemInHand();
         Block block = event.getBlock();
 
-        for(Entry<Material, Material> mineable : Utils.mineables.entrySet()) {
-            for(Entry<Material, Integer> tool : Utils.tools.entrySet()) {
-                if(item.getType() == tool.getKey()) {
-                    if (block.getType() == mineable.getKey()) {
-                        inventory.addItem(Utils.createItem(mineable.getValue(), 1 * tool.getValue(), mineable.getValue().name()));
+        for(Mineable mineable : Utils.mineables) {
+            for(Tool tool : Utils.tools) {
+                if(item.getType() == tool.getPickaxe()) {
+                    if (block.getType() == mineable.getType()) {
+                        inventory.addItem(Utils.createItem(mineable.getOre().getMaterial(), tool.getGatherAmount(), mineable.getOre().getDisplayName(), mineable.getOre().getLore()));
                     }
                 }
             }
         }
+        event.setCancelled(true);
     }
 
     public void givePotionEffect(Player player, PotionEffect effect) {
         player.addPotionEffect(effect);
+    }
+
+    public void addMoney(Player player, int amount) {
+        String query = "UPDATE minecraft.player SET Money = Money + ? WHERE PlayerUID = ?;";
+        Connection connection;
+        try {
+            connection = DriverManager.getConnection(DataManager.url, DataManager.user, DataManager.password);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            preparedStatement.setInt(1, amount);
+            preparedStatement.setString(2, player.getUniqueId().toString());
+
+            preparedStatement.executeUpdate();
+
+            ServerEvents.CreateScoreboard(player);
+            connection.close();
+        } catch (SQLException throwables) {
+            Logger.getLogger("Huh, looks like the money didn't increase");
+        }
+    }
+
+    public void removeMoney(Player player, int amount) {
+        String query = "UPDATE minecraft.player SET Money = Money - ? WHERE PlayerUID = ?;";
+        Connection connection;
+        try {
+            connection = DriverManager.getConnection(DataManager.url, DataManager.user, DataManager.password);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            preparedStatement.setInt(1, amount);
+            preparedStatement.setString(2, player.getUniqueId().toString());
+
+            preparedStatement.executeUpdate();
+
+            ServerEvents.CreateScoreboard(player);
+            connection.close();
+        } catch (SQLException throwables) {
+            Logger.getLogger("Huh, looks like the money didn't decrease");
+        }
     }
 }

@@ -24,7 +24,6 @@ public class entitiesInArea implements CommandExecutor {
             BoundingBox Box = new BoundingBox(location.getBlockX() + 50, location.getBlockY() + 50, location.getBlockZ() + 50, location.getBlockX() - 50, location.getBlockY() - 50, location.getBlockZ() - 50);
 
             Collection <Entity> entityList = location.getWorld().getNearbyEntities(Box);
-
             for(Entity entity : entityList) {
                 if(entities.containsKey(entity.getName())) {
                     entities.replace(entity.getName(),  entities.get(entity.getName()) + 1);

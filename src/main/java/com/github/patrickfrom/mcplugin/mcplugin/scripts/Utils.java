@@ -1,5 +1,8 @@
 package com.github.patrickfrom.mcplugin.mcplugin.scripts;
 
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Mineable;
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Ore;
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Tool;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -10,21 +13,38 @@ import java.util.List;
 import java.util.Map;
 
 public class Utils {
-    public static Map<Material, Material> mineables = new HashMap<Material, Material>() {{
-        put(Material.COAL_ORE, Material.COAL);
-        put(Material.COPPER_ORE, Material.COPPER_INGOT);
-        put(Material.IRON_ORE, Material.IRON_INGOT);
-        put(Material.REDSTONE_ORE, Material.REDSTONE);
-        put(Material.GOLD_ORE, Material.GOLD_INGOT);
-        put(Material.LAPIS_ORE, Material.LAPIS_LAZULI);
-        put(Material.EMERALD_ORE, Material.EMERALD);
-        put(Material.DIAMOND_ORE, Material.DIAMOND);
-    }};
+    public static Ore[] ores = {
+      new Ore("§8Coal", Material.COAL, 1),
+      new Ore("§6Raw Copper", Material.RAW_COPPER, 4),
+      new Ore("§fRaw Iron", Material.RAW_IRON, 8),
+      new Ore("§eRaw Gold", Material.RAW_GOLD, 16),
+      new Ore("§4Redstone", Material.REDSTONE, 32),
+      new Ore("§9Lapiz Lazuli", Material.LAPIS_LAZULI, 64),
+      new Ore("§2Emerald", Material.EMERALD, 128),
+      new Ore("§bDiamond", Material.DIAMOND, 256),
+    };
 
-    public static Map<Material, Integer> tools = new HashMap<Material, Integer>() {{
-        put(Material.FLINT, 1);
-        put(Material.WOODEN_PICKAXE, 2);
-    }};
+    public static Mineable[] mineables = {
+        new Mineable(ores[0], Material.COAL_ORE),
+        new Mineable(ores[1], Material.COPPER_ORE),
+        new Mineable(ores[2], Material.IRON_ORE),
+        new Mineable(ores[3], Material.GOLD_ORE),
+        new Mineable(ores[4], Material.REDSTONE_ORE),
+        new Mineable(ores[5], Material.LAPIS_ORE),
+        new Mineable(ores[6], Material.EMERALD_ORE),
+        new Mineable(ores[7], Material.DIAMOND_ORE)
+    };
+
+    public static Tool[] tools = {
+        new Tool(Material.FLINT, 1),
+        new Tool(Material.WOODEN_PICKAXE, 2),
+        new Tool(Material.STONE_PICKAXE, 4),
+        new Tool(Material.IRON_PICKAXE, 8),
+        new Tool(Material.GOLDEN_PICKAXE, 12),
+        new Tool(Material.DIAMOND_PICKAXE, 16),
+        new Tool(Material.NETHERITE_PICKAXE, 20),
+        new Tool(Material.STONECUTTER, 24)
+    };
 
     public static ItemStack createItem(Material material, int amount, String displayName){
         ItemStack item = createItem(material,amount,displayName, "");

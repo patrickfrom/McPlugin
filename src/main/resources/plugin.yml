@@ -1,4 +1,4 @@
-name: McPlugin
+name: MinerIdle
 version: '${project.version}'
 main: com.github.patrickfrom.mcplugin.mcplugin.McPlugin
 api-version: 1.17
