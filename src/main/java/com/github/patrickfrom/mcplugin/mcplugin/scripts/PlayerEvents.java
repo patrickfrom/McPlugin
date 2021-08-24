@@ -63,7 +63,7 @@ public class PlayerEvents implements Listener {
     public void PlayerRespawnEvent(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         World world = player.getWorld();
-        Location spawnLocation = new Location(world, 201,91,-285);
+        Location spawnLocation = new Location(world, 197,200,-285);
         player.teleport(spawnLocation);
     }
 
@@ -84,7 +84,7 @@ public class PlayerEvents implements Listener {
 
                         } else {
                             ItemStack stack = inventory.getItem(itemStackIndex);
-                            sellAmount += stack.getAmount();
+                            sellAmount += stack.getAmount() * ore.getSellPrice();
                             inventory.clear(itemStackIndex);
                         }
                     }

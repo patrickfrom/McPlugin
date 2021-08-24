@@ -3,6 +3,7 @@ package com.github.patrickfrom.mcplugin.mcplugin.scripts;
 import com.github.patrickfrom.mcplugin.mcplugin.McPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -38,14 +39,16 @@ public class ServerEvents implements Listener {
         Player player = event.getPlayer();
         Boolean hasPlayed = player.hasPlayedBefore();
 
-        if(!hasPlayed)
+        if(!hasPlayed) {
             Bukkit.broadcastMessage("A new player has joined " + player.getName());
+            player.getInventory().addItem(Utils.createItem(Material.FLINT, 1, "Flint Shard", "Your first mining tool"));
+        }
 
         CreateTitleBar(player);
         CreateScoreboard(player);
 
         World world = player.getWorld();
-        Location spawnLocation = new Location(world, 201,91,-285);
+        Location spawnLocation = new Location(world, 197,200,-285);
         player.teleport(spawnLocation);
 
         event.setJoinMessage(null);
