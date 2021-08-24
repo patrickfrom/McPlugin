@@ -16,18 +16,18 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.*;
 
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -140,13 +140,16 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler
-    public void OnItemHit(BlockDamageEvent event) {
+    public void OnItemInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Inventory inventory = player.getInventory();
 
         ItemStack item = player.getItemInHand();
-        Block block = event.getBlock();
 
+        EquipmentSlot hand = event.getHand();
+        Block block = event.getClickedBlock();
+
+        // CHECK IF IS RIGHT HAND
         for(Mineable mineable : Utils.mineables) {
             for(Tool tool : Utils.tools) {
                 if(item.getType() == tool.getPickaxe()) {
@@ -156,7 +159,30 @@ public class PlayerEvents implements Listener {
                 }
             }
         }
-        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void OnItemDamaged(BlockDamageEvent event) {
+        Player player = event.getPlayer();
+        if(!player.isOp()) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void OnBlockPlaced(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        if(!player.isOp()) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void OnDropItem(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        if(!player.isOp()) {
+            event.setCancelled(true);
+        }
     }
 
     public void givePotionEffect(Player player, PotionEffect effect) {
