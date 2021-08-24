@@ -72,6 +72,26 @@ public class PlayerEvents implements Listener {
         if (entity.getType() == EntityType.VILLAGER) {
             if (entity.getCustomName().equals("Bob")) {
                 MainMenu main = new MainMenu(player);
+            } else if (entity.getCustomName().equals("Henry")) {
+                int sellAmount = 0;
+                Inventory inventory = player.getInventory();
+                for(Ore ore : Utils.ores) {
+                    for (int i = 0; i <= 36; i++) {
+                        int itemStackIndex = inventory.first(ore.getMaterial());
+                        if (itemStackIndex == -1) {
+
+                        } else {
+                            ItemStack stack = inventory.getItem(itemStackIndex);
+                            sellAmount += stack.getAmount();
+                            inventory.clear(itemStackIndex);
+                        }
+                    }
+                }
+                if (sellAmount == 0) {
+
+                } else {
+                    addMoney(player, sellAmount);
+                }
             }
         }
     }

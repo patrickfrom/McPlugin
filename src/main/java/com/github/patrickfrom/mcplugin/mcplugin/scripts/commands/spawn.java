@@ -13,7 +13,7 @@ public class spawn implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = ((Player) sender).getPlayer();
             World world = player.getWorld();
-            Location spawnLocation = new Location(world, 201,91,-285);
+            Location spawnLocation = new Location(world, 197,200,-285);
             player.teleport(spawnLocation);
         }
         return true;

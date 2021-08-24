@@ -4,7 +4,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Utils {
@@ -25,10 +27,25 @@ public class Utils {
     }};
 
     public static ItemStack createItem(Material material, int amount, String displayName){
-        ItemStack item = new ItemStack(material, amount);
+        ItemStack item = createItem(material,amount,displayName, "");
+        return item;
+    }
 
+    public static ItemStack createItem(Material material, int amount, String displayName, String... lorestring){
+        ItemStack item = new ItemStack(material, amount);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(displayName);
+
+        List<String> lore = new ArrayList<>();
+        for(String line : lorestring) {
+            lore.add(line);
+        }
+        String[] emptyString = new String[] {""};
+        if (lorestring == emptyString) {
+
+        } else {
+            itemMeta.setLore(lore);
+        }
 
         item.setItemMeta(itemMeta);
         return item;
