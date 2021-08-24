@@ -15,9 +15,9 @@ public class infoCommand implements CommandExecutor {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("§4CREATORS\n");
             stringBuilder.append("§cNoah & Patrick\n");
-            stringBuilder.append("§4∎∎∎∎∎∎∎∎∎∎∎∎∎∎\n");
+            stringBuilder.append("§4∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎\n");
             stringBuilder.append("§cVersion: 1.0.0\n");
-            stringBuilder.append("§4∎∎∎∎∎∎∎∎∎∎∎∎∎∎");
+            stringBuilder.append("§4∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎");
 
             player.sendMessage(stringBuilder.toString());
         }

@@ -19,9 +19,10 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
+import java.sql.*;
+
 public class ServerEvents implements Listener {
     private static final McPlugin plugin = McPlugin.getPlugin(McPlugin.class);
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onServerListPing(ServerListPingEvent event) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -41,6 +42,12 @@ public class ServerEvents implements Listener {
 
         CreateTitleBar(player);
         CreateScoreboard(player);
+
+        World world = player.getWorld();
+        Location spawnLocation = new Location(world, 201,91,-285);
+        player.teleport(spawnLocation);
+
+        event.setJoinMessage(null);
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -59,9 +66,12 @@ public class ServerEvents implements Listener {
 
     public void CreateScoreboard(Player player) {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        Objective objective = scoreboard.registerNewObjective("Display", "dummy", "Sigma");
+        String query = "SELECT * FROM player WHERE PlayerUID='" + player.getUniqueId() +"';";
+        Connection connection;
 
-        objective.setDisplayName("§0Sigma");
+        Objective objective = scoreboard.registerNewObjective("ServerDisplay", "dummy", "MoneyDisplay");
+
+        objective.setDisplayName("§0" + player.getName());
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         try {

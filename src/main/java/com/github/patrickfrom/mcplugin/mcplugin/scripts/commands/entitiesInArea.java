@@ -4,12 +4,12 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.entity.Entity;
 import java.util.Collection;
-import java.util.function.Predicate;
+import java.util.HashMap;
+import java.util.Map;
 
 public class entitiesInArea implements CommandExecutor {
 
@@ -18,21 +18,19 @@ public class entitiesInArea implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             Location location = player.getLocation();
-            int[] loc1 = new int[3];
-            int[] loc2 = new int[3];
 
-            loc1[0] = location.getBlockX() + 50;
-            loc1[1] = location.getBlockY() + 50;
-            loc1[2] = location.getBlockZ() + 50;
-            loc2[0] = location.getBlockX() - 50;
-            loc2[1] = location.getBlockY() - 50;
-            loc2[2] = location.getBlockZ() - 50;
+            Map<String, Integer> entities = new HashMap<String, Integer>();
 
-            BoundingBox Box = new BoundingBox(loc1[0], loc1[1], loc1 [2], loc2[0], loc2[1], loc2[2]);
+            BoundingBox Box = new BoundingBox(location.getBlockX() + 50, location.getBlockY() + 50, location.getBlockZ() + 50, location.getBlockX() - 50, location.getBlockY() - 50, location.getBlockZ() - 50);
 
             Collection <Entity> entityList = location.getWorld().getNearbyEntities(Box);
-            for(Entity peepee : entityList) {
-                player.sendMessage(peepee.getName());
+
+            for(Entity entity : entityList) {
+                if(entities.containsKey(entity.getName())) {
+                    entities.replace(entity.getName(),  entities.get(entity.getName()) + 1);
+                } else {
+                    entities.put(entity.getName(), 1);
+                }   
             }
         }
         return true;

@@ -26,20 +26,32 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.PotionEffectType;
 
 
-public class PlayerEvents implements Listener {
-    private static final McPlugin plugin = McPlugin.getPlugin(McPlugin.class);
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
 
+public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        event.setJoinMessage("");
+        String query = "INSERT INTO minecraft.player(PlayerUID, Money) VALUES('" + player.getUniqueId() + "', '" + 150 + "');";
+        Connection connection;
+        try {
+            connection = DriverManager.getConnection(DataManager.url, DataManager.user, DataManager.password);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
 
-        player.sendMessage("Welcome " + player.getName());
+            preparedStatement.executeUpdate();
+            connection.close();
+        } catch (SQLException throwables) {
+            Logger.getLogger("Already exists");
+        }
     }
 
     @EventHandler
@@ -84,7 +96,6 @@ public class PlayerEvents implements Listener {
         }
     }
 
-    boolean jumpBoost = false;
     @EventHandler
     public void PlayerMoveEvent(PlayerMoveEvent event) {
         Player player = event.getPlayer();
