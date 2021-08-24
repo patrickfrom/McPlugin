@@ -1,5 +1,6 @@
 package com.github.patrickfrom.mcplugin.mcplugin.scripts.commands;
 
+import java.util.Map.Entry;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class entitiesInArea implements CommandExecutor {
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
@@ -32,6 +32,12 @@ public class entitiesInArea implements CommandExecutor {
                     entities.put(entity.getName(), 1);
                 }   
             }
+
+            for(Entry<String, Integer> entry : entities.entrySet()) {
+                player.sendMessage(entry.getKey() + ": " + entry.getValue());
+            }
+
+            entities.clear();
         }
         return true;
     }
