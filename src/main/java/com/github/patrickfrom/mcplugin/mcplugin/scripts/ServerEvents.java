@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -64,7 +65,7 @@ public class ServerEvents implements Listener {
         bar.addPlayer(player);
     }
 
-    public void CreateScoreboard(Player player) {
+    public static void CreateScoreboard(Player player) {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         String query = "SELECT * FROM player WHERE PlayerUID='" + player.getUniqueId() +"';";
         Connection connection;

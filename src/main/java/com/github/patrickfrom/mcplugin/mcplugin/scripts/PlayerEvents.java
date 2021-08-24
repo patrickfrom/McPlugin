@@ -17,12 +17,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import org.bukkit.potion.PotionEffect;
@@ -113,6 +116,26 @@ public class PlayerEvents implements Listener {
             givePotionEffect(player, jumpEffect);
         }
     }
+
+    @EventHandler
+    public void OnItemHit(BlockDamageEvent event) {
+        Player player = event.getPlayer();
+        Inventory inventory = player.getInventory();
+
+        ItemStack item = player.getItemInHand();
+        Block block = event.getBlock();
+
+        for(Entry<Material, Material> mineable : Utils.mineables.entrySet()) {
+            for(Entry<Material, Integer> tool : Utils.tools.entrySet()) {
+                if(item.getType() == tool.getKey()) {
+                    if (block.getType() == mineable.getKey()) {
+                        inventory.addItem(Utils.createItem(mineable.getValue(), 1 * tool.getValue(), mineable.getValue().name()));
+                    }
+                }
+            }
+        }
+    }
+
     public void givePotionEffect(Player player, PotionEffect effect) {
         player.addPotionEffect(effect);
     }
