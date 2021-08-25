@@ -25,14 +25,14 @@ public class Utils {
     };
 
     public static Mineable[] mineables = {
-        new Mineable(ores[0], Material.COAL_ORE),
-        new Mineable(ores[1], Material.COPPER_ORE),
-        new Mineable(ores[2], Material.IRON_ORE),
-        new Mineable(ores[3], Material.GOLD_ORE),
-        new Mineable(ores[4], Material.REDSTONE_ORE),
-        new Mineable(ores[5], Material.LAPIS_ORE),
-        new Mineable(ores[6], Material.EMERALD_ORE),
-        new Mineable(ores[7], Material.DIAMOND_ORE)
+        new Mineable(ores[0], Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE, 24),
+        new Mineable(ores[1], Material.COPPER_ORE, Material.DEEPSLATE_COPPER_ORE, 21),
+        new Mineable(ores[2], Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE, 18),
+        new Mineable(ores[3], Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE, 15),
+        new Mineable(ores[4], Material.REDSTONE_ORE, Material.DEEPSLATE_REDSTONE_ORE, 12),
+        new Mineable(ores[5], Material.LAPIS_ORE, Material.DEEPSLATE_LAPIS_ORE, 9),
+        new Mineable(ores[6], Material.EMERALD_ORE, Material.DEEPSLATE_EMERALD_ORE, 6),
+        new Mineable(ores[7], Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE, 3),
     };
 
     public static Tool[] tools = {
@@ -43,7 +43,7 @@ public class Utils {
         new Tool(Material.GOLDEN_PICKAXE, 12),
         new Tool(Material.DIAMOND_PICKAXE, 16),
         new Tool(Material.NETHERITE_PICKAXE, 20),
-        new Tool(Material.STONECUTTER, 24)
+        new Tool(Material.STONECUTTER, 24),
     };
 
     public static ItemStack createItem(Material material, int amount, String displayName){

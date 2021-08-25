@@ -8,9 +8,8 @@ import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.Menus.MainMenu;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Mineable;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Ore;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Tool;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import com.google.common.eventbus.DeadEvent;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -21,8 +20,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import org.bukkit.event.player.*;
@@ -39,9 +40,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Random;
 import java.util.logging.Logger;
 
 public class PlayerEvents implements Listener {
+    Random random = new Random();
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -80,18 +84,14 @@ public class PlayerEvents implements Listener {
                 for(Ore ore : Utils.ores) {
                     for (int i = 0; i <= 36; i++) {
                         int itemStackIndex = inventory.first(ore.getMaterial());
-                        if (itemStackIndex == -1) {
-
-                        } else {
+                        if (itemStackIndex != -1) {
                             ItemStack stack = inventory.getItem(itemStackIndex);
                             sellAmount += stack.getAmount() * ore.getSellPrice();
                             inventory.clear(itemStackIndex);
                         }
                     }
                 }
-                if (sellAmount == 0) {
-
-                } else {
+                if (sellAmount != 0) {
                     addMoney(player, sellAmount);
                 }
             }
@@ -137,16 +137,20 @@ public class PlayerEvents implements Listener {
             givePotionEffect(player, speedEffect);
             givePotionEffect(player, jumpEffect);
         }
+
+        if(player.getDisplayName() == "Pattech") {
+            player.spawnParticle(Particle.SQUID_INK, player.getLocation(), 50);
+        }
     }
 
     @EventHandler
     public void OnItemInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        Inventory inventory = player.getInventory();
 
+        Inventory inventory = player.getInventory();
         ItemStack item = player.getItemInHand();
 
-        EquipmentSlot hand = event.getHand();
+        Action action = event.getAction();
         Block block = event.getClickedBlock();
 
         // CHECK IF IS RIGHT HAND
