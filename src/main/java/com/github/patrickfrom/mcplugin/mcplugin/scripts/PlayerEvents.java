@@ -35,8 +35,6 @@ import org.bukkit.inventory.ItemStack;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.spigotmc.event.player.PlayerSpawnLocationEvent;
-
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -151,7 +149,7 @@ public class PlayerEvents implements Listener {
             givePotionEffect(player, jumpEffect);
         }
 
-        if(player.getDisplayName() == "Pattech") {
+        if(player.getUniqueId().toString() == "f4ce2656-2b42-4fcd-880c-407710170a1d") {
             player.spawnParticle(Particle.SQUID_INK, player.getLocation(), 50);
         }
     }
