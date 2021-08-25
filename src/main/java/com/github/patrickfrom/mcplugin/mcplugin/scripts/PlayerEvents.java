@@ -16,6 +16,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,6 +35,7 @@ import org.bukkit.inventory.ItemStack;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 
 import java.sql.Connection;
@@ -61,6 +63,14 @@ public class PlayerEvents implements Listener {
         } catch (SQLException throwables) {
             Logger.getLogger("Already exists");
         }
+    }
+
+    @EventHandler
+    public void PlayerDeathEvent(PlayerDeathEvent event) {
+        Player player = event.getEntity();
+        World world = player.getWorld();
+        Location spawnLocation = new Location(world, 197,200,-285);
+        player.teleport(spawnLocation);
     }
 
     @EventHandler
@@ -152,15 +162,44 @@ public class PlayerEvents implements Listener {
 
         Action action = event.getAction();
         Block block = event.getClickedBlock();
+        World world = block.getLocation().getWorld();
 
-        // CHECK IF IS RIGHT HAND
-        for(Mineable mineable : Utils.mineables) {
-            for(Tool tool : Utils.tools) {
-                if(item.getType() == tool.getPickaxe()) {
-                    if (block.getType() == mineable.getType()) {
-                        inventory.addItem(Utils.createItem(mineable.getOre().getMaterial(), tool.getGatherAmount(), mineable.getOre().getDisplayName(), mineable.getOre().getLore()));
+        Tool currentTool = null;
+        Mineable currentMineable = null;
+        boolean isDeepslate = false;
+
+        int chance = 0;
+        int randomNum = random.nextInt(100);
+
+        if(action == Action.LEFT_CLICK_BLOCK) {
+            for(Mineable mineable : Utils.mineables) {
+                for(Tool tool : Utils.tools) {
+                    if (item.getType() == tool.getPickaxe()) {
+                        if (block.getType() == mineable.getSpecialBlock()) {
+                            block.setType(mineable.getType());
+                            isDeepslate = true;
+                            currentTool = tool;
+                            currentMineable = mineable;
+                            chance = mineable.getChance();
+                        } else if(block.getType() == mineable.getType()) {
+                            isDeepslate = false;
+                            currentTool = tool;
+                            currentMineable = mineable;
+                            chance = mineable.getChance();
+                        }
                     }
                 }
+            }
+            Ore ore = currentMineable.getOre();
+            if(!isDeepslate) {
+                inventory.addItem(Utils.createItem(ore.getMaterial(), currentTool.getGatherAmount(), ore.getDisplayName(), ore.getLore()));
+            } else {
+                inventory.addItem(Utils.createItem(ore.getMaterial(), currentTool.getGatherAmount() * 7, ore.getDisplayName(), ore.getLore()));
+            }
+            if(randomNum <= chance) {
+                world.spawnParticle(Particle.EXPLOSION_LARGE, block.getLocation(), 100);
+                world.playSound(block.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 0);
+                block.setType(currentMineable.getSpecialBlock());
             }
         }
     }
