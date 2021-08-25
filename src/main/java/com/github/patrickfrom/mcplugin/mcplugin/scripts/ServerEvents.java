@@ -20,8 +20,10 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
+import sun.security.x509.UniqueIdentity;
 
 import java.sql.*;
+import java.util.UUID;
 
 public class ServerEvents implements Listener {
     private static final McPlugin plugin = McPlugin.getPlugin(McPlugin.class);
@@ -44,7 +46,7 @@ public class ServerEvents implements Listener {
             player.getInventory().addItem(Utils.createItem(Material.FLINT, 1, "Flint Shard", "Your first mining tool"));
         }
 
-        CreateTitleBar(player);
+        CreateExperienceBar(player);
         CreateScoreboard(player);
 
         World world = player.getWorld();
@@ -62,15 +64,67 @@ public class ServerEvents implements Listener {
         event.setQuitMessage(null);
     }
 
+    public static void AddExperience(Player player, int expAmount) {
+        UUID id = player.getUniqueId();
+        String query = "UPDATE minecraft.player SET exp = exp + "+expAmount+" WHERE PlayerUID = "+id+";";
 
-    public void CreateTitleBar(Player player) {
-        BossBar bar = Bukkit.createBossBar("§0Sigma Chad", BarColor.WHITE, BarStyle.SOLID);
+        Connection connection;
+        try {
+            connection = DriverManager.getConnection(DataManager.url, DataManager.user, DataManager.password);
+            Statement statement = connection.createStatement();
+            statement.executeQuery(query);
+            connection.close();
+        } catch (SQLException ex) {
+            player.sendMessage("EXCEPTION ServerEvents: "+ex);
+        }
+
+    }
+
+    public void CreateExperienceBar(Player player) {
+        UUID id = player.getUniqueId();
+        String query = "SELECT Level, exp FROM player WHERE PlayerUID='" + id +"';";
+
+        Connection connection;
+
+        double progress = 0;
+        double level = 0;
+        int exp = 0;
+
+        try {
+            connection = DriverManager.getConnection(DataManager.url, DataManager.user, DataManager.password);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                level = resultSet.getByte("Level");
+                exp = resultSet.getInt("exp");
+            }
+            connection.close();
+        } catch (SQLException ex) {
+            player.sendMessage("EXCEPTION ServerEvents: "+ex);
+        }
+
+        // y = x^2
+        // y = exp, x = level
+        // exp / level^2
+        // FIX MATH
+        level = Math.sqrt(exp);
+        int finalLevel = (int) level;
+
+        progress = exp / Math.pow(finalLevel,2);
+
+        BossBar bar = Bukkit.createBossBar("Level: "+level, BarColor.WHITE, BarStyle.SOLID);
+
+        player.sendMessage("level is: "+finalLevel);
+        player.sendMessage("exp is: "+exp);
+        player.sendMessage("Progress is: "+progress);
+        bar.setProgress(progress);
         bar.addPlayer(player);
     }
 
     public static void CreateScoreboard(Player player) {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        String query = "SELECT * FROM player WHERE PlayerUID='" + player.getUniqueId() +"';";
+        String query = "SELECT Money FROM player WHERE PlayerUID='" + player.getUniqueId() +"';";
         Connection connection;
 
         Objective objective = scoreboard.registerNewObjective("ServerDisplay", "dummy", "MoneyDisplay");

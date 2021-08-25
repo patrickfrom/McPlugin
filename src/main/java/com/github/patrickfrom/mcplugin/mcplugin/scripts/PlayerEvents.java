@@ -90,6 +90,7 @@ public class PlayerEvents implements Listener {
                 MainMenu main = new MainMenu(player);
             } else if (entity.getCustomName().equals("Henry")) {
                 int sellAmount = 0;
+                int expAmount = 0;
                 Inventory inventory = player.getInventory();
                 for(Ore ore : Utils.ores) {
                     for (int i = 0; i <= 36; i++) {
@@ -97,12 +98,14 @@ public class PlayerEvents implements Listener {
                         if (itemStackIndex != -1) {
                             ItemStack stack = inventory.getItem(itemStackIndex);
                             sellAmount += stack.getAmount() * ore.getSellPrice();
+                            expAmount += 1;
                             inventory.clear(itemStackIndex);
                         }
                     }
                 }
                 if (sellAmount != 0) {
                     addMoney(player, sellAmount);
+                    ServerEvents.AddExperience(player, expAmount);
                 }
             }
         }
