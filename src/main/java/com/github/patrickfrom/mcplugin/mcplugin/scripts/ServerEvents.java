@@ -8,7 +8,9 @@ import org.bukkit.World;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -19,10 +21,11 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.util.BoundingBox;
 import sun.security.x509.UniqueIdentity;
 
 import java.sql.*;
-import java.util.UUID;
+import java.util.*;
 
 public class ServerEvents implements Listener {
     public static List<BossBar> bossbarList = new ArrayList<BossBar>();
@@ -106,16 +109,19 @@ public class ServerEvents implements Listener {
         } catch (SQLException ex) {
             player.sendMessage("EXCEPTION ServerEvents: "+ex);
         }
-
+        CreateExperienceBar(player);
     }
 
-    public void CreateExperienceBar(Player player) {
+    public static void CreateExperienceBar(Player player) {
+        for(BossBar bossbar : bossbarList) {
+            bossbar.removePlayer(player);
+        }
+
         UUID id = player.getUniqueId();
-        String query = "SELECT Level, exp FROM player WHERE PlayerUID='" + id +"';";
+        String query = "SELECT exp FROM player WHERE PlayerUID='" + id +"';";
 
         Connection connection;
 
-        double progress = 0;
         double level = 0;
         int exp = 0;
 
@@ -125,7 +131,6 @@ public class ServerEvents implements Listener {
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next()) {
-                level = resultSet.getByte("Level");
                 exp = resultSet.getInt("exp");
             }
             connection.close();
@@ -169,5 +174,47 @@ public class ServerEvents implements Listener {
         }
 
         player.setScoreboard(scoreboard);
+    }
+
+    public static void checkMineBorders(Player player) {
+        World world = player.getWorld();
+
+        Location copperMineBottom = new Location(world, 242, 198, -272);
+        Location copperMineTop = new Location(world, 244, 201, -267);
+
+        Location ironMineBottom = new Location(world, 271, 190, -269);
+        Location ironMineTop = new Location(world, 272, 192, -265);
+
+        Map<Integer, BoundingBox> mines = new HashMap<Integer, BoundingBox>() {{
+           put(25, new BoundingBox(
+                   copperMineBottom.getX(),
+                   copperMineBottom.getY(),
+                   copperMineBottom.getZ(),
+                   copperMineTop.getX(),
+                   copperMineTop.getY(),
+                   copperMineTop.getZ()
+           ));
+           put(50, new BoundingBox(
+                ironMineBottom.getX(),
+                ironMineBottom.getY(),
+                ironMineBottom.getZ(),
+                ironMineTop.getX(),
+                ironMineTop.getY(),
+                ironMineTop.getZ()
+           ));
+        }};
+
+        for(Map.Entry<Integer, BoundingBox> mine : mines.entrySet()) {
+            Collection<Entity> entities = world.getNearbyEntities(mine.getValue());
+            for (Entity entity : entities) {
+                if (entity.getUniqueId() == player.getUniqueId()) {
+                    if(getExperienceLevel(player)[1] < mine.getKey()) {
+                        Location back = new Location(world, mine.getValue().getCenterX() - 3, mine.getValue().getCenterY(), mine.getValue().getCenterZ(), -90, 0);
+                        player.sendMessage("You aren't the required level to access this mine!");
+                        player.teleport(back);
+                    }
+                }
+            }
+        }
     }
 }

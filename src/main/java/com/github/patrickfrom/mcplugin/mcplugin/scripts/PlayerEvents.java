@@ -10,12 +10,15 @@ import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Ore;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Tool;
 import com.google.common.eventbus.DeadEvent;
 import org.bukkit.*;
+import org.bukkit.block.BlastFurnace;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Furnace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,20 +30,24 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.BoundingBox;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class PlayerEvents implements Listener {
@@ -96,7 +103,7 @@ public class PlayerEvents implements Listener {
                         if (itemStackIndex != -1) {
                             ItemStack stack = inventory.getItem(itemStackIndex);
                             sellAmount += stack.getAmount() * ore.getSellPrice();
-                            expAmount += 1;
+                            expAmount += 1 * stack.getAmount();
                             inventory.clear(itemStackIndex);
                         }
                     }
@@ -106,6 +113,13 @@ public class PlayerEvents implements Listener {
                     ServerEvents.AddExperience(player, expAmount);
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void OnEntityDamagedEvent(EntityDamageEvent event) {
+        if(!event.getEntity().isOp()) {
+            event.setCancelled(true);
         }
     }
 
@@ -135,6 +149,7 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void PlayerMoveEvent(PlayerMoveEvent event) {
         Player player = event.getPlayer();
+        World world = player.getWorld();
         PotionEffect slowEffect = new PotionEffect(PotionEffectType.SLOW, 10, 3);
         PotionEffect jumpEffect = new PotionEffect(PotionEffectType.JUMP, 10, 5);
         PotionEffect speedEffect = new PotionEffect(PotionEffectType.SPEED, 10, 5);
@@ -149,9 +164,27 @@ public class PlayerEvents implements Listener {
             givePotionEffect(player, jumpEffect);
         }
 
-        if(player.getUniqueId().toString() == "f4ce2656-2b42-4fcd-880c-407710170a1d") {
-            player.spawnParticle(Particle.SQUID_INK, player.getLocation(), 50);
+        Location parkourLeft = new Location(world, 183, 194, -253);
+        Location parkourRight = new Location(world, 130, 195, -296);
+
+        BoundingBox parkourBox = new BoundingBox(
+                parkourLeft.getX(),
+                parkourLeft.getY(),
+                parkourLeft.getZ(),
+                parkourRight.getX(),
+                parkourRight.getY(),
+                parkourRight.getZ()
+        );
+
+        Collection<Entity> entities = world.getNearbyEntities(parkourBox);
+        for (Entity entity : entities) {
+            if(entity.getUniqueId() == player.getUniqueId()) {
+                Location spawnLocation = new Location(world, 197, 200, -286);
+                player.teleport(spawnLocation);
+            }
         }
+
+        ServerEvents.checkMineBorders(player);
     }
 
     @EventHandler
@@ -203,6 +236,26 @@ public class PlayerEvents implements Listener {
                 block.setType(currentMineable.getSpecialBlock());
             }
         }
+
+        if(action == Action.RIGHT_CLICK_BLOCK) {
+            if(block.getType() == Material.BLAST_FURNACE) {
+                Inventory furnaceInventory = Bukkit.createInventory(player, 3, "§0Smelter");
+
+                for(int i = 0; i >= 26; i++) {
+                    furnaceInventory.addItem(Utils.createItem(Material.WHITE_STAINED_GLASS_PANE, 1, ""));
+                }
+                furnaceInventory.setItem(11, null);
+                furnaceInventory.setItem(13, Utils.createItem(Material.FIRE, 1, ""));
+                furnaceInventory.setItem(15, null);
+
+                player.openInventory(furnaceInventory);
+            }
+        }
+    }
+    
+    @EventHandler
+    public void OnInventoryOpenEvent(InventoryOpenEvent event) {
+
     }
 
     @EventHandler

@@ -13,6 +13,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Utils {
+    public static Material[] smeltables = {
+            Material.RAW_COPPER,
+            Material.RAW_IRON,
+            Material.RAW_GOLD
+    };
+
     public static Ore[] ores = {
       new Ore("§8Coal", Material.COAL, 1),
       new Ore("§6Raw Copper", Material.RAW_COPPER, 4),
