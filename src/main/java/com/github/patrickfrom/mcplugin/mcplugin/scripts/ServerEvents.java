@@ -25,7 +25,8 @@ import java.sql.*;
 import java.util.UUID;
 
 public class ServerEvents implements Listener {
-    private static final McPlugin plugin = McPlugin.getPlugin(McPlugin.class);
+    public static List<BossBar> bossbarList = new ArrayList<BossBar>();
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onServerListPing(ServerListPingEvent event) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -63,15 +64,44 @@ public class ServerEvents implements Listener {
         event.setQuitMessage(null);
     }
 
+    public  static int[] getExperienceLevel(Player player) {
+        UUID id = player.getUniqueId();
+        String query = "SELECT exp FROM player WHERE PlayerUID='" + id +"';";
+
+        Connection connection;
+        int[] returnInt = new int[2];
+        int exp = 0;
+
+        try {
+            connection = DriverManager.getConnection(DataManager.url, DataManager.user, DataManager.password);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                exp = resultSet.getInt("exp");
+            }
+            connection.close();
+        } catch (SQLException ex) {
+            player.sendMessage("EXCEPTION ServerEvents: "+ex);
+        }
+        double level = Math.sqrt(exp);
+        int roundedLevel = (int) Math.floor(level);
+
+        returnInt[0] = exp;
+        returnInt[1] = roundedLevel;
+        return returnInt;
+    }
+
     public static void AddExperience(Player player, int expAmount) {
         UUID id = player.getUniqueId();
-        String query = "UPDATE minecraft.player SET exp = exp + "+expAmount+" WHERE PlayerUID = "+id+";";
+
+        String query = "UPDATE player SET exp = exp + "+expAmount+" WHERE PlayerUID = '"+id+"';";
 
         Connection connection;
         try {
             connection = DriverManager.getConnection(DataManager.url, DataManager.user, DataManager.password);
             Statement statement = connection.createStatement();
-            statement.executeQuery(query);
+            statement.executeUpdate(query);
             connection.close();
         } catch (SQLException ex) {
             player.sendMessage("EXCEPTION ServerEvents: "+ex);
@@ -103,20 +133,13 @@ public class ServerEvents implements Listener {
             player.sendMessage("EXCEPTION ServerEvents: "+ex);
         }
 
-        // y = x^2
-        // y = exp, x = level
-        // exp / level^2
-        // FIX MATH
         level = Math.sqrt(exp);
-        int finalLevel = (int) level;
+        int roundedLevel = (int) Math.floor(level);
+        double progress = level - roundedLevel;
 
-        progress = exp / Math.pow(finalLevel,2);
+        BossBar bar = Bukkit.createBossBar("Level: "+roundedLevel, BarColor.WHITE, BarStyle.SOLID);
+        bossbarList.add(bar);
 
-        BossBar bar = Bukkit.createBossBar("Level: "+level, BarColor.WHITE, BarStyle.SOLID);
-
-        player.sendMessage("level is: "+finalLevel);
-        player.sendMessage("exp is: "+exp);
-        player.sendMessage("Progress is: "+progress);
         bar.setProgress(progress);
         bar.addPlayer(player);
     }
