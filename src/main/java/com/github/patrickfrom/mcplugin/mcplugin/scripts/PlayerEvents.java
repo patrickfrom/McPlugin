@@ -8,18 +8,14 @@ import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.Menus.MainMenu;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Mineable;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Ore;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Tool;
-import com.google.common.eventbus.DeadEvent;
+
 import org.bukkit.*;
-import org.bukkit.block.BlastFurnace;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Furnace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,20 +24,21 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.FurnaceExtractEvent;
+import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
+
+
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -147,7 +144,37 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler
-    public void PlayerMoveEvent(PlayerMoveEvent event) {
+    public void OnSmeltEvent(FurnaceSmeltEvent event) {
+        ItemStack itemSource = event.getSource();
+        Material itemMaterial = null;
+        String rarity = null;
+        int sellPrice = 0;
+
+        for(Ingot ingot : Utils.ingots) {
+            if(itemSource.getType() == ingot.getSmeltMaterial()) {
+                itemMaterial = ingot.getMaterial();
+                sellPrice = ingot.getSellPrice();
+                rarity = ingot.getRandom();
+            }
+        }
+
+        ItemStack smeltedItem = new ItemStack(Utils.createItem(itemMaterial, 1, rarity + " " + itemSource.getItemMeta().getDisplayName(), "Sell Price: " + sellPrice));
+        event.setResult(smeltedItem);
+    }
+
+    @EventHandler
+    public void FurnaceExtractEvent(FurnaceExtractEvent event) {
+        Player player = event.getPlayer();
+        Material itemType = event.getItemType();
+        for(Ingot ingot : Utils.ingots) {
+            if(itemType == ingot.getMaterial()) {
+                removeMoney(player, ingot.getSellPrice()/2);
+            }
+        }
+    }
+
+    @EventHandler
+    public void OnPlayerMoveEvent(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         World world = player.getWorld();
         PotionEffect slowEffect = new PotionEffect(PotionEffectType.SLOW, 10, 3);
@@ -210,6 +237,9 @@ public class PlayerEvents implements Listener {
                 for(Tool tool : Utils.tools) {
                     if (item.getType() == tool.getPickaxe()) {
                         if (block.getType() == mineable.getSpecialBlock()) {
+                            if(inventory.firstEmpty() == -1) {
+                                player.sendMessage("Your inventory is full");
+                            }
                             block.setType(mineable.getType());
                             isDeepslate = true;
                             currentTool = tool;
@@ -235,27 +265,9 @@ public class PlayerEvents implements Listener {
                 world.playSound(block.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 0);
                 block.setType(currentMineable.getSpecialBlock());
             }
+        } else if(action == Action.RIGHT_CLICK_BLOCK) {
+
         }
-
-        if(action == Action.RIGHT_CLICK_BLOCK) {
-            if(block.getType() == Material.BLAST_FURNACE) {
-                Inventory furnaceInventory = Bukkit.createInventory(player, 3, "§0Smelter");
-
-                for(int i = 0; i >= 26; i++) {
-                    furnaceInventory.addItem(Utils.createItem(Material.WHITE_STAINED_GLASS_PANE, 1, ""));
-                }
-                furnaceInventory.setItem(11, null);
-                furnaceInventory.setItem(13, Utils.createItem(Material.FIRE, 1, ""));
-                furnaceInventory.setItem(15, null);
-
-                player.openInventory(furnaceInventory);
-            }
-        }
-    }
-    
-    @EventHandler
-    public void OnInventoryOpenEvent(InventoryOpenEvent event) {
-
     }
 
     @EventHandler
@@ -268,14 +280,6 @@ public class PlayerEvents implements Listener {
 
     @EventHandler
     public void OnBlockPlaced(BlockPlaceEvent event) {
-        Player player = event.getPlayer();
-        if(!player.isOp()) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void OnDropItem(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
         if(!player.isOp()) {
             event.setCancelled(true);

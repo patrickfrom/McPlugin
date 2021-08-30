@@ -1,5 +1,6 @@
 package com.github.patrickfrom.mcplugin.mcplugin.scripts;
 
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Ingot;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Mineable;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Ore;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Tool;
@@ -28,6 +29,24 @@ public class Utils {
       new Ore("§9Lapiz Lazuli", Material.LAPIS_LAZULI, 64),
       new Ore("§2Emerald", Material.EMERALD, 128),
       new Ore("§bDiamond", Material.DIAMOND, 256),
+    };
+
+    public static String[] rarities = {
+            "§8Garbage",
+            "§7Broken",
+            "§dBad",
+            "§cRough",
+            "Normal",
+            "§5Sleek",
+            "§3Fine",
+            "§4Exquisite",
+            "§6Perfect"
+    };
+
+    public static Ingot[] ingots = {
+            new Ingot(Material.COPPER_INGOT, Material.RAW_COPPER,8),
+            new Ingot(Material.IRON_INGOT, Material.RAW_IRON,16),
+            new Ingot(Material.GOLD_INGOT, Material.RAW_GOLD,32),
     };
 
     public static Mineable[] mineables = {

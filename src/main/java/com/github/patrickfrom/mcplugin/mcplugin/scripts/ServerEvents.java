@@ -87,7 +87,7 @@ public class ServerEvents implements Listener {
         } catch (SQLException ex) {
             player.sendMessage("EXCEPTION ServerEvents: "+ex);
         }
-        double level = Math.sqrt(exp);
+        double level = Math.cbrt(exp);
         int roundedLevel = (int) Math.floor(level);
 
         returnInt[0] = exp;
@@ -138,7 +138,7 @@ public class ServerEvents implements Listener {
             player.sendMessage("EXCEPTION ServerEvents: "+ex);
         }
 
-        level = Math.sqrt(exp);
+        level = Math.cbrt(exp);
         int roundedLevel = (int) Math.floor(level);
         double progress = level - roundedLevel;
 
