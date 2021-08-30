@@ -5,6 +5,7 @@ import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.CustomHolder;
 
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.Icon;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.GUI.Menus.MainMenu;
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Ingot;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Mineable;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Ore;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Tool;
