@@ -1,8 +1,10 @@
 package com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects;
 
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.Lists;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Utils;
 import org.bukkit.Material;
 
+import java.util.Map;
 import java.util.Random;
 
 public class Ingot {
@@ -30,6 +32,7 @@ public class Ingot {
 
     public String getRandom() {
         Random ran = new Random();
-        return Utils.rarities[ran.nextInt(8)];
+
+        return Lists.rarities[ran.nextInt(8)];
     }
 }

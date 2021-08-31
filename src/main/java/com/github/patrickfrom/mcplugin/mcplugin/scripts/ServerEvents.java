@@ -1,6 +1,5 @@
 package com.github.patrickfrom.mcplugin.mcplugin.scripts;
 
-import com.github.patrickfrom.mcplugin.mcplugin.McPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,7 +9,6 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -22,7 +20,6 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.BoundingBox;
-import sun.security.x509.UniqueIdentity;
 
 import java.sql.*;
 import java.util.*;

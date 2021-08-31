@@ -26,21 +26,16 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.FurnaceExtractEvent;
-import org.bukkit.event.inventory.FurnaceSmeltEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.*;
 
 import org.bukkit.event.player.*;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
-
-
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -53,7 +48,7 @@ public class PlayerEvents implements Listener {
     Random random = new Random();
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void OnPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
         String query = "INSERT INTO minecraft.player(PlayerUID, Money) VALUES('" + player.getUniqueId() + "', '" + 150 + "');";
@@ -70,7 +65,7 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler
-    public void PlayerDeathEvent(PlayerDeathEvent event) {
+    public void OnPlayerDeathEvent(PlayerDeathEvent event) {
         Player player = event.getEntity();
         World world = player.getWorld();
         Location spawnLocation = new Location(world, 197,200,-285);
@@ -78,7 +73,7 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler
-    public void PlayerRespawnEvent(PlayerRespawnEvent event) {
+    public void OnPlayerRespawnEvent(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         World world = player.getWorld();
         Location spawnLocation = new Location(world, 197,200,-285);
@@ -86,7 +81,7 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler
-    public void PlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
+    public void OnPlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         Entity entity = event.getRightClicked();
         if (entity.getType() == EntityType.VILLAGER) {
@@ -96,12 +91,33 @@ public class PlayerEvents implements Listener {
                 int sellAmount = 0;
                 int expAmount = 0;
                 Inventory inventory = player.getInventory();
-                for(Ore ore : Utils.ores) {
+                player.closeInventory();
+                for(Ore ore : Lists.ores) {
                     for (int i = 0; i <= 36; i++) {
                         int itemStackIndex = inventory.first(ore.getMaterial());
                         if (itemStackIndex != -1) {
                             ItemStack stack = inventory.getItem(itemStackIndex);
                             sellAmount += stack.getAmount() * ore.getSellPrice();
+                            expAmount += 1 * stack.getAmount();
+                            inventory.clear(itemStackIndex);
+                        }
+                    }
+                }
+                if (sellAmount != 0) {
+                    addMoney(player, sellAmount);
+                    ServerEvents.AddExperience(player, expAmount);
+                }
+            } else if(entity.getCustomName().equals("Bill Gates")) {
+                int sellAmount = 0;
+                int expAmount = 0;
+                Inventory inventory = player.getInventory();
+                player.closeInventory();
+                for(Ingot ingot : Lists.ingots) {
+                    for (int i = 0; i <= 36; i++) {
+                        int itemStackIndex = inventory.first(ingot.getMaterial());
+                        if (itemStackIndex != -1) {
+                            ItemStack stack = inventory.getItem(itemStackIndex);
+                            sellAmount += stack.getAmount() * ingot.getSellPrice();
                             expAmount += 1 * stack.getAmount();
                             inventory.clear(itemStackIndex);
                         }
@@ -123,7 +139,7 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler
-    public void InventoryClickEvent(InventoryClickEvent event) {
+    public void OnInventoryClickEvent(InventoryClickEvent event) {
         if (event.getView().getTopInventory().getHolder() instanceof CustomHolder) {
             event.setCancelled(true);
 
@@ -152,7 +168,7 @@ public class PlayerEvents implements Listener {
         String rarity = null;
         int sellPrice = 0;
 
-        for(Ingot ingot : Utils.ingots) {
+        for(Ingot ingot : Lists.ingots) {
             if(itemSource.getType() == ingot.getSmeltMaterial()) {
                 itemMaterial = ingot.getMaterial();
                 sellPrice = ingot.getSellPrice();
@@ -165,10 +181,10 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler
-    public void FurnaceExtractEvent(FurnaceExtractEvent event) {
+    public void OnFurnaceExtractEvent(FurnaceExtractEvent event) {
         Player player = event.getPlayer();
         Material itemType = event.getItemType();
-        for(Ingot ingot : Utils.ingots) {
+        for(Ingot ingot : Lists.ingots) {
             if(itemType == ingot.getMaterial()) {
                 removeMoney(player, ingot.getSellPrice()/2);
             }
@@ -230,16 +246,18 @@ public class PlayerEvents implements Listener {
         Tool currentTool = null;
         Mineable currentMineable = null;
         boolean isDeepslate = false;
+        boolean isInventoryFull = inventory.firstEmpty() == -1;
 
         int chance = 0;
         int randomNum = random.nextInt(100);
 
+
         if(action == Action.LEFT_CLICK_BLOCK) {
-            for(Mineable mineable : Utils.mineables) {
-                for(Tool tool : Utils.tools) {
+            for(Mineable mineable : Lists.mineables) {
+                for(Tool tool : Lists.tools) {
                     if (item.getType() == tool.getPickaxe()) {
                         if (block.getType() == mineable.getSpecialBlock()) {
-                            if(inventory.firstEmpty() == -1) {
+                            if(isInventoryFull) {
                                 player.sendMessage("Your inventory is full");
                             }
                             block.setType(mineable.getType());
@@ -267,8 +285,6 @@ public class PlayerEvents implements Listener {
                 world.playSound(block.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 0);
                 block.setType(currentMineable.getSpecialBlock());
             }
-        } else if(action == Action.RIGHT_CLICK_BLOCK) {
-
         }
     }
 
