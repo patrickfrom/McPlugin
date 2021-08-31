@@ -19,3 +19,6 @@ commands:
   menu:
     description: Opens the main menu
     usage: /<command>
+  killnear:
+    description: Kills the nearest entity within 5 blocks
+    usage: /<command>

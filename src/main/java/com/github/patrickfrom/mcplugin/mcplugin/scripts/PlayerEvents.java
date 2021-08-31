@@ -9,6 +9,7 @@ import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Ingot;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Mineable;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Ore;
 import com.github.patrickfrom.mcplugin.mcplugin.scripts.Objects.Tool;
+import com.github.patrickfrom.mcplugin.mcplugin.scripts.Lists;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;

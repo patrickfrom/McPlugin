@@ -18,6 +18,7 @@ public final class McPlugin extends JavaPlugin {
         this.getCommand("spawn").setExecutor(new spawn());
         this.getCommand("shop").setExecutor(new shop());
         this.getCommand("menu").setExecutor(new menu());
+        this.getCommand("killnear").setExecutor(new killnear());
     }
     @Override
     public void onDisable() {
